@@ -1,6 +1,9 @@
+import EventDispatcher from '@actualwave/event-dispatcher';
 import { fsTarget, gistTarget, pinned } from '../settings';
 
-class Info {
+export const INFO_UPDATE_EVENT = 'infoUpdate';
+
+class Info extends EventDispatcher {
   constructor(fs, project) {
     this.fs = fs;
     this.project = project;
@@ -9,10 +12,16 @@ class Info {
 
   clone() {
     const next = new this.constructor(this.fs, this.project);
-    // FIXME clone settings
+    // FIXME should we also clone settings?
     next.applySettings(this.settings);
 
     return next;
+  }
+
+  update(fs, project) {
+    this.fs = fs;
+    this.project = project;
+    this.dispatchEvent(INFO_UPDATE_EVENT, this);
   }
 
   applySettings(settings) {

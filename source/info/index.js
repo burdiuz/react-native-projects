@@ -22,9 +22,23 @@ const directoryInfoFactory = async (directory, projectInfo = null) =>
 
 const fileInfoFactory = async (file, projectInfo = null) => new FileInfo(file, projectInfo);
 
-export const createInfoItem = async (file, projectInfo, suggestedType = null) => {
+export const createInfoItem = async (
+  file,
+  projectInfo,
+  suggestedType = null,
+  cacheStorage = null,
+) => {
   const type = suggestedType || (await getItemType(file));
   let factory;
+
+  if (cacheStorage) {
+    const cachedItem = cacheStorage.get(file.path());
+
+    if (cachedItem && cachedItem.type === type) {
+      cachedItem.update(file, projectInfo);
+      return cachedItem;
+    }
+  }
 
   switch (type) {
     case PROJECT_TYPE:
@@ -42,15 +56,19 @@ export const createInfoItem = async (file, projectInfo, suggestedType = null) =>
 
   await readSettingsFor(item);
 
+  if (cacheStorage) {
+    cacheStorage.set(file.path(), item);
+  }
+
   return item;
 };
 
-export const createInfoItems = async (list, projectInfo = null) => {
+export const createInfoItems = async (list, projectInfo = null, cacheStorage = null) => {
   const result = [];
   const total = list.length;
 
   for (let index = 0; index < total; index++) {
-    result[index] = await createInfoItem(list[index], projectInfo);
+    result[index] = await createInfoItem(list[index], projectInfo, null, cacheStorage);
   }
 
   return result;

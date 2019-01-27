@@ -35,6 +35,8 @@ import {
   deleteProjectByName,
 } from './delete';
 
+import { createCacheStorage, getCachedFactories } from './cache';
+
 import {
   isValidDirectoryName,
   pausterizeName,
@@ -46,7 +48,14 @@ import {
   getInfoSettingsPath,
 } from './utils';
 
-import { getContainersRoot, getProjectsRoot, getTemplatesRoot, getRootDirectories } from './root';
+import {
+  getContainersRoot,
+  getProjectsRoot,
+  getTemplatesRoot,
+  getSnippetsRoot,
+  getToolsRoot,
+  getRootDirectories,
+} from './root';
 
 export const readDirectory = async (directory, project = null) => {
   let list;
@@ -118,4 +127,6 @@ export {
   getProjectsRoot,
   getTemplatesRoot,
   getRootDirectories,
+  createCacheStorage,
+  getCachedFactories,
 };

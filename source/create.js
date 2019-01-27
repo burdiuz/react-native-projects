@@ -7,21 +7,31 @@ import { writeSettingsFor } from './fs/settings';
 import { generateDirectoryNameFrom, getParentDirectory } from './utils';
 
 // FIXME init settings file
-
-export const createFile = async (fileName, content = '', projectInfo, directoryInfo = null) => {
+export const createFile = async (
+  fileName,
+  content = '',
+  projectInfo,
+  directoryInfo = null,
+  cacheStorage = null,
+) => {
   const parent = await getParentDirectory(projectInfo, directoryInfo);
 
   const file = await createFileRaw(parent, fileName, content);
 
-  return createInfoItem(file, projectInfo, FILE_TYPE);
+  return createInfoItem(file, projectInfo, FILE_TYPE, cacheStorage);
 };
 
-export const createDirectory = async (directoryName, projectInfo, directoryInfo = null) => {
+export const createDirectory = async (
+  directoryName,
+  projectInfo,
+  directoryInfo = null,
+  cacheStorage = null,
+) => {
   const parent = await getParentDirectory(projectInfo, directoryInfo);
 
   const directory = await createDirectoryRaw(parent, directoryName);
 
-  return createInfoItem(directory, projectInfo, DIRECTORY_TYPE);
+  return createInfoItem(directory, projectInfo, DIRECTORY_TYPE, cacheStorage);
 };
 
 export const createProject = async (
@@ -29,6 +39,7 @@ export const createProject = async (
   proposedDirectoryName,
   parentProjectInfo,
   directoryInfo = null,
+  cacheStorage = null,
 ) => {
   const parent = await getParentDirectory(parentProjectInfo, directoryInfo);
 
@@ -43,7 +54,7 @@ export const createProject = async (
 
   const directory = await createDirectoryRaw(parent, directoryName);
 
-  const projectInfo = await createInfoItem(directory, projectInfo, PROJECT_TYPE);
+  const projectInfo = await createInfoItem(directory, projectInfo, PROJECT_TYPE, cacheStorage);
 
   projectInfo.name = projectName;
 
