@@ -5,6 +5,8 @@ export const INFO_UPDATE_EVENT = 'infoUpdate';
 
 class Info extends EventDispatcher {
   constructor(fs, project) {
+    super();
+
     this.fs = fs;
     this.project = project;
     this.settings = null;

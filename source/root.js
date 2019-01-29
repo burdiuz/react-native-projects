@@ -44,14 +44,14 @@ const createIfNotExists = async (getPath, init, setup) => {
   let runSetup = false;
 
   if (!directory.exists()) {
-    let runSetup = true;
+    runSetup = true;
     await directory.create();
     await init(directory);
   }
 
   const info = await createInfoItem(directory, null, DIRECTORY_TYPE);
 
-  if (runSetup) {
+  if (runSetup && setup) {
     await setup(info);
   }
 
@@ -73,28 +73,20 @@ const initProjectsSettings = (info) => {
   allowNewProjects.setValue(info.settings, true);
 };
 
-const initContainersSettings = (info) => {};
-
-const initTemplatesSettings = (info) => {};
-
-const initSnippetsSettings = (info) => {};
-
-const initToolsSettings = (info) => {};
-
 export const getProjectsRoot = () =>
   createIfNotExists(getProjectsPath, initProjectsContent, initProjectsSettings);
 
 export const getContainersRoot = () =>
-  createIfNotExists(getContainersPath, initContainersContent, initContainersSettings);
+  createIfNotExists(getContainersPath, initContainersContent);
 
 export const getTemplatesRoot = () =>
-  createIfNotExists(getTemplatesPath, initTemplatesContent, initTemplatesSettings);
+  createIfNotExists(getTemplatesPath, initTemplatesContent);
 
 export const getSnippetsRoot = () =>
-  createIfNotExists(getSnippetsPath, initSnippetsContent, initSnippetsSettings);
+  createIfNotExists(getSnippetsPath, initSnippetsContent);
 
 export const getToolsRoot = () =>
-  createIfNotExists(getTemplatesPath, initTemplatesContent, initToolsSettings);
+  createIfNotExists(getToolsPath, initToolsContent);
 
 export const getRootDirectories = async () => {
   const projects = await getProjectsRoot();

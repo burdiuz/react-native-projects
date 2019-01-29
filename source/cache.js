@@ -12,21 +12,15 @@ import {
 // don't think its necessary to cache roots since they are intended to be read-only
 // import {} from './root';
 
-const id = (path, type) => `${path}`;
+const id = (path) => `${path}`;
 
 export const createCacheStorage = () => {
   const map = new Map();
 
   return {
-    get: (path, item) => {
-      return map.get(id(path));
-    },
-    set: (path, item) => {
-      map.set(id(path), item);
-    },
-    delete: (path) => {
-      map.delete(id(path));
-    },
+    get: (path) => map.get(id(path)),
+    set: (path, item) => map.set(id(path), item),
+    delete: (path) => map.delete(id(path)),
   };
 };
 
@@ -59,6 +53,4 @@ export const getCachedFactories = (cacheStorage = createCacheStorage()) => ({
   deleteDirectoryByName: makeFactoryCached(deleteDirectoryByName, cacheStorage),
   deleteProject: makeFactoryCached(deleteProject, cacheStorage),
   deleteProjectByName: makeFactoryCached(deleteProjectByName, cacheStorage),
-
-
 });
