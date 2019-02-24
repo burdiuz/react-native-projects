@@ -1,3 +1,28 @@
+const compareNums = (n1, n2) => {
+  if (n1 > n2) return 1;
+  else if (n1 < n2) return -1;
+
+  return 0;
+};
+
+/*
+  if v1 higher than v2, return +1,
+  if v1 lower than v2, return -1,
+  if v1 equal to v2, return 0
+*/
+export const compare = (
+  { major: v1Major, minor: v1Minor, build: v1Build },
+  { major: v2Major, minor: v2Minor, build: v2Build },
+) => {
+  let result = compareNums(v1Major, v2Major);
+  if (!result) result = compareNums(v1Minor, v2Minor);
+  if (!result) result = compareNums(v1Build, v2Build);
+
+  return result;
+};
+
+const parseNum = (value) => +value || 0;
+
 class Version {
   constructor(major = 0, minor = 0, build = 0, alt = '') {
     this.major = major;
@@ -35,7 +60,7 @@ class Version {
 
   bumpMinor(reset = true) {
     const minor = this.minor + 1;
-    let build = this.build;
+    let { build } = this;
 
     if (reset) {
       build = 0;
@@ -46,8 +71,7 @@ class Version {
 
   bumpMajor(reset = true) {
     const major = this.major + 1;
-    let minor = this.minor;
-    let build = this.build;
+    let { minor, build } = this;
 
     if (reset) {
       minor = 0;
@@ -93,31 +117,6 @@ export const stringify = (version) => JSON.stringify(toObject(version));
 export const create = (major, minor, build, alt) => new Version(major, minor, build, alt);
 
 export const fromObject = ({ major, minor, build, alt }) => create(major, minor, build, alt);
-
-const compareNums = (n1, n2) => {
-  if (n1 > n2) return 1;
-  else if (n1 < n2) return -1;
-
-  return 0;
-};
-
-/*
-  if v1 higher than v2, return +1,
-  if v1 lower than v2, return -1,
-  if v1 equal to v2, return 0
-*/
-export const compare = (
-  { major: v1Major, minor: v1Minor, build: v1Build },
-  { major: v2Major, minor: v2Minor, build: v2Build },
-) => {
-  let result = compareNums(v1Major, v2Major);
-  if (!result) result = compareNums(v1Minor, v2Minor);
-  if (!result) result = compareNums(v1Build, v2Build);
-
-  return result;
-};
-
-const parseNum = (value) => +major || 0;
 
 export const parseVersionString = (value) => {
   const match = value.match(/^\s*(\d+)\.(\d+)\.(\d+)(?:-(.*))?$/);
