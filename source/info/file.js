@@ -13,6 +13,16 @@ class FileInfo extends Info {
     return fileHistory.getValue(this.settings);
   }
 
+  async getContent() {
+    const history = fileHistory.getValue(this.settings);
+
+    if(history && !history.isEmpty()) {
+      return history.currentContent;
+    }
+
+    return this.fs.read();
+  }
+
   get locked() {
     return fileLock.getValue(this.settings);
   }

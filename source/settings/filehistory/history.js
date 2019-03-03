@@ -7,9 +7,18 @@ export class History {
     this.slices = slices;
   }
 
-  get latestVersion() {
+  isEmpty() {
+    return this.slices.length < 1;
+  }
+
+  get currentVersion() {
     const latestIndex = this.slices.length - 1;
     return latestIndex >= 0 ? this.slices[latestIndex].version : createVersion();
+  }
+
+  get currentContent() {
+    const latestIndex = this.slices.length - 1;
+    return latestIndex >= 0 ? this.slices[latestIndex].content : undefined;
   }
 
   bumpVersion() {
@@ -26,6 +35,12 @@ export class History {
 }
 
 export const createHistory = (slices) => new History(slices);
+
+export const createHistoryFor = async (file) => {
+  const content = await file.read();
+
+  return new History([HistorySlice.create(content)]);
+};
 
 export const fromObject = async (list) => {
   if (!list) return createHistory();

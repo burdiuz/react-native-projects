@@ -9,7 +9,7 @@ import {
   getSnippetsPath,
   getToolsPath,
 } from './path';
-import { allowNewDirectories, allowNewProjects } from './settings';
+import { allowNewDirectories, allowNewProjects, system } from './settings';
 
 import { createInfoItem } from './info';
 
@@ -38,7 +38,7 @@ const copyAssets = async (sourceDirName, target) => {
   }
 };
 
-const createIfNotExists = async (getPath, init, setup) => {
+const createIfNotExists = async (getPath, init, setup, cacheStorage = null) => {
   const path = await getPath();
   const directory = await Directory.get(path);
   let runSetup = false;
@@ -49,10 +49,12 @@ const createIfNotExists = async (getPath, init, setup) => {
     await init(directory);
   }
 
-  const info = await createInfoItem(directory, null, DIRECTORY_TYPE);
+  const info = await createInfoItem(directory, null, DIRECTORY_TYPE, cacheStorage);
 
   if (runSetup && setup) {
     await setup(info);
+
+    info.flushSettings();
   }
 
   return info;
@@ -71,29 +73,46 @@ const initToolsContent = (target) => copyAssets(TOOLS_ASSETS_FOLDER, target);
 const initProjectsSettings = (info) => {
   allowNewDirectories.setValue(info.settings, true);
   allowNewProjects.setValue(info.settings, true);
+  system.setValue(info.settings, true);
 };
 
-export const getProjectsRoot = () =>
-  createIfNotExists(getProjectsPath, initProjectsContent, initProjectsSettings);
+const initContainersSettings = (info) => {
+  system.setValue(info.settings, true);
+};
 
-export const getContainersRoot = () =>
-  createIfNotExists(getContainersPath, initContainersContent);
+const initTemplatesSettings = (info) => {
+  system.setValue(info.settings, true);
+};
 
-export const getTemplatesRoot = () =>
-  createIfNotExists(getTemplatesPath, initTemplatesContent);
+const initSnippetsSettings = (info) => {
+  system.setValue(info.settings, true);
+};
 
-export const getSnippetsRoot = () =>
-  createIfNotExists(getSnippetsPath, initSnippetsContent);
+const initToolsSettings = (info) => {
+  system.setValue(info.settings, true);
+};
 
-export const getToolsRoot = () =>
-  createIfNotExists(getToolsPath, initToolsContent);
+export const getProjectsRoot = (cacheStorage = null) =>
+  createIfNotExists(getProjectsPath, initProjectsContent, initProjectsSettings, cacheStorage);
 
-export const getRootDirectories = async () => {
-  const projects = await getProjectsRoot();
-  const containers = await getContainersRoot();
-  const templates = await getTemplatesRoot();
-  const snippets = await getSnippetsRoot();
-  const tools = await getToolsRoot();
+export const getContainersRoot = (cacheStorage = null) =>
+  createIfNotExists(getContainersPath, initContainersContent, initContainersSettings, cacheStorage);
+
+export const getTemplatesRoot = (cacheStorage = null) =>
+  createIfNotExists(getTemplatesPath, initTemplatesContent, initTemplatesSettings, cacheStorage);
+
+export const getSnippetsRoot = (cacheStorage = null) =>
+  createIfNotExists(getSnippetsPath, initSnippetsContent, initSnippetsSettings, cacheStorage);
+
+export const getToolsRoot = (cacheStorage = null) =>
+  createIfNotExists(getToolsPath, initToolsContent, initToolsSettings, cacheStorage);
+
+export const getRootDirectories = async (cacheStorage = null) => {
+  const projects = await getProjectsRoot(cacheStorage);
+  const containers = await getContainersRoot(cacheStorage);
+  const templates = await getTemplatesRoot(cacheStorage);
+  const snippets = await getSnippetsRoot(cacheStorage);
+  const tools = await getToolsRoot(cacheStorage);
 
   return {
     projects,

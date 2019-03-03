@@ -12,7 +12,7 @@ export const makeBoolSettingApi = (name, defaultValue = false) =>
     toRawConverter: (setting) => ({ value: !!setting }),
   });
 
-  export const makeStringSettingApi = (name, defaultValue = '') =>
+export const makeStringSettingApi = (name, defaultValue = '') =>
   Object.freeze({
     SETTING_NAME: name,
 

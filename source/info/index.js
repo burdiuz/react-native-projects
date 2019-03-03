@@ -35,7 +35,7 @@ export const createInfoItem = async (
     const cachedItem = cacheStorage.get(file.path());
 
     if (cachedItem && cachedItem.type === type) {
-      cachedItem.update(file, projectInfo);
+      cachedItem.resetTarget(file, projectInfo);
       return cachedItem;
     }
   }
@@ -49,6 +49,8 @@ export const createInfoItem = async (
       break;
     case FILE_TYPE:
       factory = fileInfoFactory;
+      break;
+    default:
       break;
   }
 

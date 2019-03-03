@@ -1,3 +1,5 @@
+import React, { Component, createContext } from 'react';
+import PropTypes from 'prop-types';
 import { createInfoItem, createInfoItems } from './info';
 import { createFile, createDirectory, createProject } from './create';
 import {
@@ -8,6 +10,17 @@ import {
   deleteProject,
   deleteProjectByName,
 } from './delete';
+
+import { readDirectory, readProjectContents, readDirectoryByPath } from './read';
+
+import {
+  getProjectsRoot,
+  getContainersRoot,
+  getTemplatesRoot,
+  getSnippetsRoot,
+  getToolsRoot,
+  getRootDirectories,
+} from './root';
 
 // don't think its necessary to cache roots since they are intended to be read-only
 // import {} from './root';
@@ -24,12 +37,16 @@ export const createCacheStorage = () => {
   };
 };
 
-// factory function that supports caching always has  last argument cacheStorage.
-export const makeFactoryCached = (factoryFn, cacheStorage) => {
-  const argIndex = factoryFn.length - 1;
-
-  if (argIndex < 0) {
-    throw new Error('Cannot read arguments length from Function object.');
+/*
+  Factory function that supports caching always has last argument cacheStorage.
+  IMPORTANT: Function.length does not count arguments with default value, that's
+  why we cannot use it to put cahceStorage into arguments list by index.
+*/
+export const makeFactoryCached = (factoryFn, cacheStorage, argIndex) => {
+  if (typeof argIndex !== 'number' || argIndex < 0) {
+    throw new Error(
+      'argIndex must be a valid unsigned integer reflecting cacheStorage placement index',
+    );
   }
 
   return (...args) => {
@@ -40,17 +57,74 @@ export const makeFactoryCached = (factoryFn, cacheStorage) => {
 };
 
 export const getCachedFactories = (cacheStorage = createCacheStorage()) => ({
-  createInfoItem: makeFactoryCached(createInfoItem, cacheStorage),
-  createInfoItems: makeFactoryCached(createInfoItems, cacheStorage),
+  createInfoItem: makeFactoryCached(createInfoItem, cacheStorage, 3),
+  createInfoItems: makeFactoryCached(createInfoItems, cacheStorage, 2),
 
-  createFile: makeFactoryCached(createFile, cacheStorage),
-  createDirectory: makeFactoryCached(createDirectory, cacheStorage),
-  createProject: makeFactoryCached(createProject, cacheStorage),
+  createFile: makeFactoryCached(createFile, cacheStorage, 4),
+  createDirectory: makeFactoryCached(createDirectory, cacheStorage, 3),
+  createProject: makeFactoryCached(createProject, cacheStorage, 4),
 
-  deleteFile: makeFactoryCached(deleteFile, cacheStorage),
-  deleteFileByName: makeFactoryCached(deleteFileByName, cacheStorage),
-  deleteDirectory: makeFactoryCached(deleteDirectory, cacheStorage),
-  deleteDirectoryByName: makeFactoryCached(deleteDirectoryByName, cacheStorage),
-  deleteProject: makeFactoryCached(deleteProject, cacheStorage),
-  deleteProjectByName: makeFactoryCached(deleteProjectByName, cacheStorage),
+  readDirectory: makeFactoryCached(readDirectory, cacheStorage, 2),
+  readProjectContents: makeFactoryCached(readProjectContents, cacheStorage, 1),
+  readDirectoryByPath: makeFactoryCached(readDirectoryByPath, cacheStorage, 2),
+
+  deleteFile: makeFactoryCached(deleteFile, cacheStorage, 1),
+  deleteFileByName: makeFactoryCached(deleteFileByName, cacheStorage, 3),
+  deleteDirectory: makeFactoryCached(deleteDirectory, cacheStorage, 1),
+  deleteDirectoryByName: makeFactoryCached(deleteDirectoryByName, cacheStorage, 3),
+  deleteProject: makeFactoryCached(deleteProject, cacheStorage, 1),
+  deleteProjectByName: makeFactoryCached(deleteProjectByName, cacheStorage, 3),
+
+  getProjectsRoot: makeFactoryCached(getProjectsRoot, cacheStorage, 0),
+  getContainersRoot: makeFactoryCached(getContainersRoot, cacheStorage, 0),
+  getTemplatesRoot: makeFactoryCached(getTemplatesRoot, cacheStorage, 0),
+  getSnippetsRoot: makeFactoryCached(getSnippetsRoot, cacheStorage, 0),
+  getToolsRoot: makeFactoryCached(getToolsRoot, cacheStorage, 0),
+  getRootDirectories: makeFactoryCached(getRootDirectories, cacheStorage, 0),
 });
+
+const { Provider, Consumer } = createContext();
+
+export class ProjectsApiProvider extends Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired,
+    cacheStorage: PropTypes.shape({}),
+  };
+
+  static defaultProps = { cacheStorage: createCacheStorage() };
+
+  static getDerivedStateFromProps({ cacheStorage }, { storage } = {}) {
+    if (cacheStorage === storage) {
+      return null;
+    }
+
+    return {
+      storage: cacheStorage,
+      factories: getCachedFactories(),
+    };
+  }
+
+  constructor(props) {
+    super(props);
+
+    this.state = ProjectsApiProvider.getDerivedStateFromProps(props);
+  }
+
+  render() {
+    const { children } = this.props;
+    const { factories } = this.state;
+
+    return <Provider value={factories}>{children}</Provider>;
+  }
+}
+
+export const withProjectsApi = (ChildComponent, displayName = '') => {
+  const Wrapper = (props) => (
+    <Consumer>{(projectsApi) => <ChildComponent {...props} projectsApi={projectsApi} />}</Consumer>
+  );
+
+  Wrapper.displayName =
+    displayName || `withProjectsApi(${Component.displayName || Component.name})`;
+
+  return Wrapper;
+};

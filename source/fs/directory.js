@@ -24,6 +24,7 @@ export const deleteDirectoryRaw = async (directory) => {
 
 export const readDirectoryRaw = async (directory) => {
   const contents = await directory.read();
+
   return contents.filter((item) => !isSettingsFileName(item.name()));
 };
 

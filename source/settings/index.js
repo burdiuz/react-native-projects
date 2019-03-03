@@ -6,6 +6,7 @@ import {
 } from '@actualwave/rn-playground-settings';
 
 import * as pinned from './pinned';
+import * as system from './system';
 import * as fileHistory from './filehistory';
 import * as directoryExpand from './directoryexpand';
 import * as projectName from './projectname';
@@ -34,7 +35,7 @@ registerSettingsEntityType(FILE_TYPE);
 registerSettingsEntityType(DIRECTORY_TYPE);
 registerSettingsEntityType(PROJECT_TYPE);
 
-applySettingHandlers({ fsTarget, gistTarget, pinned }, PROJECT_TYPE, DIRECTORY_TYPE, FILE_TYPE);
+applySettingHandlers({ fsTarget, gistTarget, pinned, system }, PROJECT_TYPE, DIRECTORY_TYPE, FILE_TYPE);
 applySettingHandlers({ fileHistory, fileLock, fileImport }, FILE_TYPE);
 applySettingHandlers({ projectName }, PROJECT_TYPE);
 applySettingHandlers(
@@ -45,6 +46,7 @@ applySettingHandlers(
 
 export {
   pinned,
+  system,
   fileHistory,
   fileLock,
   fileImport,

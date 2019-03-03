@@ -1,7 +1,9 @@
 import EventDispatcher from '@actualwave/event-dispatcher';
-import { fsTarget, gistTarget, pinned } from '../settings';
+import { fsTarget, gistTarget, pinned, system } from '../settings';
+import { writeSettingsFor } from '../fs/settings';
 
-export const INFO_UPDATE_EVENT = 'infoUpdate';
+export const INFO_UPDATED_EVENT = 'infoUpdated';
+export const INFO_PARENT_UPDATED_EVENT = 'infoUpdated';
 
 class Info extends EventDispatcher {
   constructor(fs, project) {
@@ -20,10 +22,33 @@ class Info extends EventDispatcher {
     return next;
   }
 
-  update(fs, project) {
+  resetTarget(fs, project) {
     this.fs = fs;
     this.project = project;
-    this.dispatchEvent(INFO_UPDATE_EVENT, this);
+  }
+
+  updated() {
+    this.dispatchEvent(INFO_UPDATED_EVENT, this);
+  }
+
+  parentUpdated() {
+    return this.dispatchEvent(INFO_PARENT_UPDATED_EVENT, this);
+  }
+
+  addUpdatedListener(callback) {
+    return this.addEventListener(INFO_UPDATED_EVENT, callback);
+  }
+
+  addParentUpdatedListener(callback) {
+    return this.addEventListener(INFO_PARENT_UPDATED_EVENT, callback);
+  }
+
+  removeUpdatedListener(callback) {
+    return this.removeEventListener(INFO_UPDATED_EVENT, callback);
+  }
+
+  removeParentUpdatedListener(callback) {
+    return this.removeEventListener(INFO_PARENT_UPDATED_EVENT, callback);
   }
 
   applySettings(settings) {
@@ -34,12 +59,20 @@ class Info extends EventDispatcher {
     return this.settings;
   }
 
+  flushSettings() {
+    writeSettingsFor(this);
+  }
+
   get fsSettings() {
     return fsTarget.getValue(this.settings);
   }
 
   get gistSettings() {
     return gistTarget.getValue(this.settings);
+  }
+
+  get system() {
+    return system.getValue(this.settings);
   }
 
   get pinned() {

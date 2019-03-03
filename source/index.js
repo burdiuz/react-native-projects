@@ -35,7 +35,12 @@ import {
   deleteProjectByName,
 } from './delete';
 
-import { createCacheStorage, getCachedFactories } from './cache';
+import {
+  createCacheStorage,
+  getCachedFactories,
+  ProjectsApiProvider,
+  withProjectsApi,
+} from './cache';
 
 import {
   isValidDirectoryName,
@@ -57,29 +62,7 @@ import {
   getRootDirectories,
 } from './root';
 
-export const readDirectory = async (directory, project = null) => {
-  let list;
-
-  if (directory instanceof DirectoryInfo) {
-    list = await readDirectoryRaw(directory.fs);
-  } else {
-    list = await readDirectoryRaw(directory);
-  }
-
-  return createInfoItems(list, project);
-};
-
-export const readProjectContents = async (project) => {
-  const list = await readDirectoryRaw(project.directory);
-
-  return createInfoItems(list, project);
-};
-
-export const readDirectoryByPath = async (path, project = null) => {
-  const directory = await Directory.get(path);
-
-  return readDirectory(directory, project);
-};
+import { readDirectory, readProjectContents, readDirectoryByPath } from './read';
 
 export {
   FileInfo,
@@ -126,7 +109,14 @@ export {
   getContainersRoot,
   getProjectsRoot,
   getTemplatesRoot,
+  getSnippetsRoot,
+  getToolsRoot,
   getRootDirectories,
   createCacheStorage,
   getCachedFactories,
+  ProjectsApiProvider,
+  withProjectsApi,
+  readDirectory,
+  readProjectContents,
+  readDirectoryByPath,
 };

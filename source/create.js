@@ -1,4 +1,4 @@
-import { createInfoItems, createInfoItem } from './info';
+import { createInfoItem } from './info';
 import { FILE_TYPE, DIRECTORY_TYPE, PROJECT_TYPE } from './constants';
 import { createDirectoryRaw } from './fs/directory';
 import { createFileRaw } from './fs/file';
@@ -54,7 +54,7 @@ export const createProject = async (
 
   const directory = await createDirectoryRaw(parent, directoryName);
 
-  const projectInfo = await createInfoItem(directory, projectInfo, PROJECT_TYPE, cacheStorage);
+  const projectInfo = await createInfoItem(directory, parentProjectInfo, PROJECT_TYPE, cacheStorage);
 
   projectInfo.name = projectName;
 
