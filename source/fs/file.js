@@ -32,7 +32,6 @@ export const createJSONFile = (file, data) => {
   return file.write(() => convertToJSON(data));
 };
 
-
 export const readJSONFile = async (file) => {
   if (!file.exists()) {
     return Promise.reject(new Error(`File "${file.name()}" does not exist.`));

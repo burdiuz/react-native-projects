@@ -5,13 +5,14 @@ export const convertToJSON = async (data) => JSON.stringify(data, null, 2);
 
 export const parseJSON = async (data) => JSON.parse(data);
 
-const DIR_NAME_RGX = /^[^\/<>:"\|?*\r\n]+$/;
+const DIR_NAME_RGX = /^[^\/<>:"\\|?*\r\n]+$/;
 export const isValidDirectoryName = (name) => DIR_NAME_RGX.test(name);
 
 export const pausterizeName = (name) =>
   name.replace(/\s+/, ' ').replace(/\s*[\/<>:"\|?*_]+\s*/g, '_');
 
-export const generateDirectoryNameFrom = (name) => `${pausterizeName(name)}_${Date.now()}`;
+export const generateDirectoryNameFrom = (name, timestamp = Date.now()) =>
+  `${pausterizeName(name)}_${timestamp}`;
 
 export const isSettingsFileName = (name) => name.charAt() === '.';
 
@@ -31,9 +32,8 @@ export const getSettingsFileName = (name, type) => {
   return `.${base}.info`;
 };
 
-export const isProjectDirectory = (directory) => {
-  return directory.has(getSettingsFileName(directory.name(), PROJECT_TYPE));
-};
+export const isProjectDirectory = (directory) =>
+  directory.has(getSettingsFileName(directory.name(), PROJECT_TYPE));
 
 export const getItemType = async (item) => {
   if (item.isDirectory()) {
@@ -63,7 +63,6 @@ export const getInfoSettingsPath = (path, type) => {
     case DIRECTORY_TYPE:
       return `${path}${separator}${settingsFileName}`;
     default:
-      const pathChar = parentPath[parentPath.length - 1];
       return `${parentPath}${separator}${settingsFileName}`;
   }
 };

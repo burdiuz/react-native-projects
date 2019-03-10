@@ -5,10 +5,13 @@ import { writeSettingsFor } from '../fs/settings';
 export const INFO_UPDATED_EVENT = 'infoUpdated';
 export const INFO_PARENT_UPDATED_EVENT = 'infoUpdated';
 
+let index = 0;
+
 class Info extends EventDispatcher {
   constructor(fs, project) {
     super();
 
+    this.id = ++index;
     this.fs = fs;
     this.project = project;
     this.settings = null;

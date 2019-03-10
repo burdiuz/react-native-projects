@@ -9,7 +9,7 @@ import {
   getSnippetsPath,
   getToolsPath,
 } from './path';
-import { allowNewDirectories, allowNewProjects, system } from './settings';
+import { allowNewDirectories, allowNewProjects, allowNewFiles, system } from './settings';
 
 import { createInfoItem } from './info';
 
@@ -71,6 +71,7 @@ const initSnippetsContent = (target) => copyAssets(SNIPPETS_ASSETS_FOLDER, targe
 const initToolsContent = (target) => copyAssets(TOOLS_ASSETS_FOLDER, target);
 
 const initProjectsSettings = (info) => {
+  allowNewFiles.setValue(info.settings, true);
   allowNewDirectories.setValue(info.settings, true);
   allowNewProjects.setValue(info.settings, true);
   system.setValue(info.settings, true);

@@ -35,7 +35,10 @@ export const createInfoItem = async (
     const cachedItem = cacheStorage.get(file.path());
 
     if (cachedItem && cachedItem.type === type) {
+      await item._settingsPromise;
+
       cachedItem.resetTarget(file, projectInfo);
+
       return cachedItem;
     }
   }
@@ -55,12 +58,21 @@ export const createInfoItem = async (
   }
 
   const item = await factory(file, projectInfo);
-
-  await readSettingsFor(item);
+  /*
+    The point of doing this is to put item into cahce storage as soon as possible.
+    But we need to be sure its complete and ready to use item with settings.
+    That's why we store this promise to wait for it when item is retrieved
+    from cache(code above).
+  */
+  item._settingsPromise = readSettingsFor(item);
 
   if (cacheStorage) {
     cacheStorage.set(file.path(), item);
   }
+
+  await item._settingsPromise;
+
+  delete item._settingsPromise;
 
   return item;
 };
