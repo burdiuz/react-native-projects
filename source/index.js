@@ -35,12 +35,9 @@ import {
   deleteProjectByName,
 } from './delete';
 
-import {
-  createCacheStorage,
-  getCachedFactories,
-  ProjectsApiProvider,
-  withProjectsApi,
-} from './cache';
+import { createCacheStorage, getCachedFactories } from './cache';
+
+import { ProjectsApiProvider, withProjectsApi } from './provider';
 
 import {
   isValidDirectoryName,

@@ -35,7 +35,7 @@ export const createInfoItem = async (
     const cachedItem = cacheStorage.get(file.path());
 
     if (cachedItem && cachedItem.type === type) {
-      await item._settingsPromise;
+      await cachedItem._settingsPromise;
 
       cachedItem.resetTarget(file, projectInfo);
 

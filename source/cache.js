@@ -1,5 +1,3 @@
-import React, { Component, createContext } from 'react';
-import PropTypes from 'prop-types';
 import { createInfoItem, createInfoItems } from './info';
 import { createFile, createDirectory, createProject } from './create';
 import {
@@ -82,49 +80,3 @@ export const getCachedFactories = (cacheStorage = createCacheStorage()) => ({
   getToolsRoot: makeFactoryCached(getToolsRoot, cacheStorage, 0),
   getRootDirectories: makeFactoryCached(getRootDirectories, cacheStorage, 0),
 });
-
-const { Provider, Consumer } = createContext();
-
-export class ProjectsApiProvider extends Component {
-  static propTypes = {
-    children: PropTypes.node.isRequired,
-    cacheStorage: PropTypes.shape({}),
-  };
-
-  static defaultProps = { cacheStorage: createCacheStorage() };
-
-  static getDerivedStateFromProps({ cacheStorage }, { storage } = {}) {
-    if (cacheStorage === storage) {
-      return null;
-    }
-
-    return {
-      storage: cacheStorage,
-      factories: getCachedFactories(),
-    };
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.state = ProjectsApiProvider.getDerivedStateFromProps(props);
-  }
-
-  render() {
-    const { children } = this.props;
-    const { factories } = this.state;
-
-    return <Provider value={factories}>{children}</Provider>;
-  }
-}
-
-export const withProjectsApi = (ChildComponent, displayName = '') => {
-  const Wrapper = (props) => (
-    <Consumer>{(projectsApi) => <ChildComponent {...props} projectsApi={projectsApi} />}</Consumer>
-  );
-
-  Wrapper.displayName =
-    displayName || `withProjectsApi(${Component.displayName || Component.name})`;
-
-  return Wrapper;
-};
