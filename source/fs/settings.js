@@ -8,6 +8,7 @@ export const getInfoSettingsFile = (path, type) => File.get(getInfoSettingsPath(
 export const readSettings = async (path, type, entity) => {
   const file = await getInfoSettingsFile(path, type);
   let data;
+
   try {
     data = await readJSONFile(file);
   } catch (error) {

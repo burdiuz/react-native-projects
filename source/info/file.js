@@ -16,7 +16,7 @@ class FileInfo extends Info {
   async getContent() {
     const history = fileHistory.getValue(this.settings);
 
-    if(history && !history.isEmpty()) {
+    if (history && !history.isEmpty()) {
       return history.currentContent;
     }
 

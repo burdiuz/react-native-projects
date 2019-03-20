@@ -1,4 +1,4 @@
-import Version, { create as createVersion } from './version';
+import { create as createVersion } from './version';
 
 import { HistorySlice } from './historyslice';
 
@@ -42,14 +42,14 @@ export const createHistoryFor = async (file) => {
   return new History([HistorySlice.create(content)]);
 };
 
-export const fromObject = async (list) => {
-  if (!list) return createHistory();
+export const fromObject = (list) => {
+  if (!list) return null;
 
   return createHistory(list.map((obj) => HistorySlice.fromObject(obj)));
 };
 
-export const toObject = async (history) => {
-  if (!history) return [];
+export const toObject = (history) => {
+  if (!history) return null;
 
   return history.slices.map((slice) => HistorySlice.toObject(slice));
 };

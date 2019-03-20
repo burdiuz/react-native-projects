@@ -63,7 +63,7 @@ class Info extends EventDispatcher {
   }
 
   flushSettings() {
-    writeSettingsFor(this);
+    return writeSettingsFor(this);
   }
 
   get fsSettings() {

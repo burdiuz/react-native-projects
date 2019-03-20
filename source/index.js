@@ -1,22 +1,17 @@
-import { Directory } from '@actualwave/react-native-files';
-
 import {
   fileHistory,
   fileLock,
   fileImport,
   fsTarget,
-  gistTarget,
+  gistFileTarget,
+  gistProjectTarget,
   directoryExpand,
   projectName,
   applySettingHandler,
   applySettingHandlers,
 } from './settings';
 
-import {
-  readDirectoryRaw,
-  countDirectoryChildren,
-  splitByTypeDirectoryContents,
-} from './fs/directory';
+import { countDirectoryChildren, splitByTypeDirectoryContents } from './fs/directory';
 
 import { FileInfo, DirectoryInfo, ProjectInfo, createInfoItem, createInfoItems } from './info';
 
@@ -71,7 +66,8 @@ export {
   fileLock,
   fileImport,
   fsTarget,
-  gistTarget,
+  gistFileTarget,
+  gistProjectTarget,
   directoryExpand,
   projectName,
   applySettingHandler,

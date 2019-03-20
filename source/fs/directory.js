@@ -1,6 +1,6 @@
-import { File, Directory } from '@actualwave/react-native-files';
+import { Directory } from '@actualwave/react-native-files';
 
-import { DEFAULT_PROJECTS_PATH, FILE_TYPE, DIRECTORY_TYPE, PROJECT_TYPE } from '../constants';
+import { FILE_TYPE, DIRECTORY_TYPE, PROJECT_TYPE } from '../constants';
 import { getItemType, isSettingsFileName } from '../utils';
 
 export const createDirectoryRaw = async (directory, dirName) => {

@@ -15,7 +15,8 @@ import * as fileImport from './fileimport';
 import * as fileRequiresBuild from './filerequiresbuild';
 import * as fileKeepBuilt from './filekeepbuilt';
 import * as fsTarget from './fstarget';
-import * as gistTarget from './gisttarget';
+import * as gistFileTarget from './gistfiletarget';
+import * as gistProjectTarget from './gistprojecttarget';
 import * as allowNewDirectories from './allownewdirectories';
 import * as allowNewFiles from './allownewfiles';
 import * as allowNewProjects from './allownewprojects';
@@ -37,17 +38,13 @@ registerSettingsEntityType(FILE_TYPE);
 registerSettingsEntityType(DIRECTORY_TYPE);
 registerSettingsEntityType(PROJECT_TYPE);
 
+applySettingHandlers({ fsTarget, pinned, system }, PROJECT_TYPE, DIRECTORY_TYPE, FILE_TYPE);
 applySettingHandlers(
-  { fsTarget, gistTarget, pinned, system },
-  PROJECT_TYPE,
-  DIRECTORY_TYPE,
+  { fileHistory, fileLock, fileImport, gistFileTarget, fileRequiresBuild, fileKeepBuilt },
   FILE_TYPE,
 );
-applySettingHandlers(
-  { fileHistory, fileLock, fileImport, fileRequiresBuild, fileKeepBuilt },
-  FILE_TYPE,
-);
-applySettingHandlers({ projectName }, PROJECT_TYPE);
+applySettingHandlers({ projectName, gistProjectTarget }, PROJECT_TYPE);
+
 applySettingHandlers(
   { directoryExpand, allowNewDirectories, allowNewFiles, allowNewProjects },
   DIRECTORY_TYPE,
@@ -63,7 +60,8 @@ export {
   fileRequiresBuild,
   fileKeepBuilt,
   fsTarget,
-  gistTarget,
+  gistFileTarget,
+  gistProjectTarget,
   projectName,
   directoryExpand,
   allowNewDirectories,
