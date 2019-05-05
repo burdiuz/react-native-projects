@@ -1,4 +1,4 @@
-import { projectName } from '../settings';
+import { projectName, gistProjectTarget } from '../settings';
 
 import DirectoryInfo from './directory';
 import { PROJECT_TYPE } from '../constants';
@@ -18,6 +18,10 @@ class ProjectInfo extends DirectoryInfo {
     if (!this.settings) return;
 
     projectName.setValue(this.settings, value);
+  }
+
+  get gistSettings() {
+    return gistProjectTarget.getValue(this.settings);
   }
 }
 

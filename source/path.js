@@ -9,6 +9,7 @@ export const PROJECTS_DIR_NAME = 'Projects';
 export const TEMPLATES_DIR_NAME = 'File Templates';
 export const CONTAINERS_DIR_NAME = 'Demo Containers';
 export const SNIPPETS_DIR_NAME = 'Code Snippets';
+export const MODULES_DIR_NAME = 'Modules';
 export const TOOLS_DIR_NAME = 'Tools';
 
 const requestExternalStoragePermission = async () => {
@@ -55,6 +56,12 @@ export const getSnippetsPath = async () => {
   const root = await getRootFilesPath();
 
   return `${root}/${SNIPPETS_DIR_NAME}`;
+};
+
+export const getModulesPath = async () => {
+  const root = await getRootFilesPath();
+
+  return `${root}/${MODULES_DIR_NAME}`;
 };
 
 export const getToolsPath = async () => {

@@ -1,5 +1,5 @@
 import EventDispatcher from '@actualwave/event-dispatcher';
-import { fsTarget, gistTarget, pinned, system } from '../settings';
+import { fsTarget, pinned, system } from '../settings';
 import { writeSettingsFor } from '../fs/settings';
 
 export const INFO_UPDATED_EVENT = 'infoUpdated';
@@ -68,10 +68,6 @@ class Info extends EventDispatcher {
 
   get fsSettings() {
     return fsTarget.getValue(this.settings);
-  }
-
-  get gistSettings() {
-    return gistTarget.getValue(this.settings);
   }
 
   get system() {

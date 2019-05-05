@@ -1,5 +1,5 @@
 import { FILE_TYPE } from '../constants';
-import { fileHistory, fileLock, fileImport } from '../settings';
+import { fileHistory, gistFileTarget, fileLock, fileImport } from '../settings';
 import Info from './info';
 
 class FileInfo extends Info {
@@ -39,6 +39,18 @@ class FileInfo extends Info {
   get importName() {
     const { importName } = fileImport.getValue(this.settings);
     return importName;
+  }
+
+  get gistSettings() {
+    return gistFileTarget.getValue(this.settings);
+  }
+
+  read(encoding) {
+    return this.fs.read(encoding);
+  }
+
+  write(content, encoding) {
+    return this.fs.write(content, encoding);
   }
 
   enableImport(importName, enabled = true) {

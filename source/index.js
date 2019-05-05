@@ -50,11 +50,14 @@ import {
   getProjectsRoot,
   getTemplatesRoot,
   getSnippetsRoot,
+  getModulesRoot,
   getToolsRoot,
   getRootDirectories,
 } from './root';
 
 import { readDirectory, readProjectContents, readDirectoryByPath } from './read';
+
+import { writeFile } from './write';
 
 export {
   FileInfo,
@@ -103,6 +106,7 @@ export {
   getProjectsRoot,
   getTemplatesRoot,
   getSnippetsRoot,
+  getModulesRoot,
   getToolsRoot,
   getRootDirectories,
   createCacheStorage,
@@ -112,4 +116,5 @@ export {
   readDirectory,
   readProjectContents,
   readDirectoryByPath,
+  writeFile,
 };

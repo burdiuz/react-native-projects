@@ -7,6 +7,7 @@ import {
   getContainersPath,
   getTemplatesPath,
   getSnippetsPath,
+  getModulesPath,
   getToolsPath,
 } from './path';
 import { allowNewDirectories, allowNewProjects, allowNewFiles, system } from './settings';
@@ -17,6 +18,7 @@ const PROJECT_ASSETS_FOLDER = 'projects';
 const CONTAINER_ASSETS_FOLDER = 'containers';
 const TEMPLATES_ASSETS_FOLDER = 'templates';
 const SNIPPETS_ASSETS_FOLDER = 'snippets';
+const MODULES_ASSETS_FOLDER = 'modules';
 const TOOLS_ASSETS_FOLDER = 'tools';
 
 const copyAssets = async (sourceDirName, target) => {
@@ -68,6 +70,8 @@ const initTemplatesContent = (target) => copyAssets(TEMPLATES_ASSETS_FOLDER, tar
 
 const initSnippetsContent = (target) => copyAssets(SNIPPETS_ASSETS_FOLDER, target);
 
+const initModulesContent = (target) => copyAssets(MODULES_ASSETS_FOLDER, target);
+
 const initToolsContent = (target) => copyAssets(TOOLS_ASSETS_FOLDER, target);
 
 const initProjectsSettings = (info) => {
@@ -89,6 +93,10 @@ const initSnippetsSettings = (info) => {
   system.setValue(info.settings, true);
 };
 
+const initModulesSettings = (info) => {
+  system.setValue(info.settings, true);
+};
+
 const initToolsSettings = (info) => {
   system.setValue(info.settings, true);
 };
@@ -105,6 +113,9 @@ export const getTemplatesRoot = (cacheStorage = null) =>
 export const getSnippetsRoot = (cacheStorage = null) =>
   createIfNotExists(getSnippetsPath, initSnippetsContent, initSnippetsSettings, cacheStorage);
 
+export const getModulesRoot = (cacheStorage = null) =>
+  createIfNotExists(getModulesPath, initModulesContent, initModulesSettings, cacheStorage);
+
 export const getToolsRoot = (cacheStorage = null) =>
   createIfNotExists(getToolsPath, initToolsContent, initToolsSettings, cacheStorage);
 
@@ -113,6 +124,7 @@ export const getRootDirectories = async (cacheStorage = null) => {
   const containers = await getContainersRoot(cacheStorage);
   const templates = await getTemplatesRoot(cacheStorage);
   const snippets = await getSnippetsRoot(cacheStorage);
+  const modules = await getModulesRoot(cacheStorage);
   const tools = await getToolsRoot(cacheStorage);
 
   return {
@@ -120,6 +132,7 @@ export const getRootDirectories = async (cacheStorage = null) => {
     containers,
     templates,
     snippets,
+    modules,
     tools,
   };
 };

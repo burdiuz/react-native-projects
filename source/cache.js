@@ -17,6 +17,7 @@ import {
   getTemplatesRoot,
   getSnippetsRoot,
   getToolsRoot,
+  getModulesRoot,
   getRootDirectories,
 } from './root';
 
@@ -77,6 +78,7 @@ export const getCachedFactories = (cacheStorage = createCacheStorage()) => ({
   getContainersRoot: makeFactoryCached(getContainersRoot, cacheStorage, 0),
   getTemplatesRoot: makeFactoryCached(getTemplatesRoot, cacheStorage, 0),
   getSnippetsRoot: makeFactoryCached(getSnippetsRoot, cacheStorage, 0),
+  getModulesRoot: makeFactoryCached(getModulesRoot, cacheStorage, 0),
   getToolsRoot: makeFactoryCached(getToolsRoot, cacheStorage, 0),
   getRootDirectories: makeFactoryCached(getRootDirectories, cacheStorage, 0),
 });
