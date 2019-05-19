@@ -22,7 +22,7 @@ export class History {
   }
 
   bumpVersion() {
-    return this.version.bump();
+    return this.currentVersion.bump();
   }
 
   addContent(content, locked = false, version = null) {
