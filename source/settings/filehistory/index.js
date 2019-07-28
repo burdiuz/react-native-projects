@@ -21,6 +21,7 @@ export const initializer = async (fileInfo, entityType) => {
       we must wait for promsie to reject here.
     */
     const history = await createHistoryFor(fileInfo.fs);
+    
     return history;
   } catch (error) {
     // FIXME need better way to handle binary files read() error

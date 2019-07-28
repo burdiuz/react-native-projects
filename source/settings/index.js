@@ -11,9 +11,7 @@ import * as fileHistory from './filehistory';
 import * as directoryExpand from './directoryexpand';
 import * as projectName from './projectname';
 import * as fileLock from './filelock';
-import * as fileImport from './fileimport';
 import * as fileRequiresBuild from './filerequiresbuild';
-import * as fileKeepBuilt from './filekeepbuilt';
 import * as fileRunContainer from './fileruncontainer';
 import * as fsTarget from './fstarget';
 import * as gistFileTarget from './gistfiletarget';
@@ -41,7 +39,7 @@ registerSettingsEntityType(PROJECT_TYPE);
 
 applySettingHandlers({ fsTarget, pinned, system }, PROJECT_TYPE, DIRECTORY_TYPE, FILE_TYPE);
 applySettingHandlers(
-  { fileHistory, fileLock, fileImport, gistFileTarget, fileRequiresBuild, fileKeepBuilt, fileRunContainer },
+  { fileHistory, fileLock, gistFileTarget, fileRequiresBuild, fileRunContainer },
   FILE_TYPE,
 );
 applySettingHandlers({ projectName, gistProjectTarget }, PROJECT_TYPE);
@@ -57,9 +55,7 @@ export {
   system,
   fileHistory,
   fileLock,
-  fileImport,
   fileRequiresBuild,
-  fileKeepBuilt,
   fileRunContainer,
   fsTarget,
   gistFileTarget,

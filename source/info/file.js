@@ -1,5 +1,5 @@
 import { FILE_TYPE } from '../constants';
-import { fileHistory, gistFileTarget, fileLock, fileImport } from '../settings';
+import { fileHistory, gistFileTarget, fileLock } from '../settings';
 import Info from './info';
 
 class FileInfo extends Info {
@@ -31,16 +31,6 @@ class FileInfo extends Info {
     fileLock.setValue(this.settings, value);
   }
 
-  get importEnabled() {
-    const { enabled } = fileImport.getValue(this.settings);
-    return enabled;
-  }
-
-  get importName() {
-    const { importName } = fileImport.getValue(this.settings);
-    return importName;
-  }
-
   get gistSettings() {
     return gistFileTarget.getValue(this.settings);
   }
@@ -51,14 +41,6 @@ class FileInfo extends Info {
 
   write(content, encoding) {
     return this.fs.write(content, encoding);
-  }
-
-  enableImport(importName, enabled = true) {
-    return fileLock.setValue(this.settings, { importName, enabled });
-  }
-
-  disableImport() {
-    return fileLock.setValue(this.settings, { importName: this.importName, enabled: false });
   }
 }
 

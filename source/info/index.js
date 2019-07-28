@@ -59,7 +59,7 @@ export const createInfoItem = async (
 
   const item = await factory(file, projectInfo);
   /*
-    The point of doing this is to put item into cahce storage as soon as possible.
+    The point of doing this is to put item into cache storage as soon as possible.
     But we need to be sure its complete and ready to use item with settings.
     That's why we store this promise to wait for it when item is retrieved
     from cache(code above).

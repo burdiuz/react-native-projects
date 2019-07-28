@@ -11,7 +11,12 @@ import {
 
 import { readDirectory, readProjectContents, readDirectoryByPath } from './read';
 
+import { copyTo, moveTo, renameTo } from './copy';
+
+import { getFromPath, getParent } from './get';
+
 import {
+  getRoot,
   getProjectsRoot,
   getContainersRoot,
   getTemplatesRoot,
@@ -56,6 +61,10 @@ export const makeFactoryCached = (factoryFn, cacheStorage, argIndex) => {
 };
 
 export const getCachedFactories = (cacheStorage = createCacheStorage()) => ({
+  getCached: cacheStorage.get,
+  setCached: cacheStorage.set,
+  deleteCached: cacheStorage.delete,
+
   createInfoItem: makeFactoryCached(createInfoItem, cacheStorage, 3),
   createInfoItems: makeFactoryCached(createInfoItems, cacheStorage, 2),
 
@@ -67,6 +76,10 @@ export const getCachedFactories = (cacheStorage = createCacheStorage()) => ({
   readProjectContents: makeFactoryCached(readProjectContents, cacheStorage, 1),
   readDirectoryByPath: makeFactoryCached(readDirectoryByPath, cacheStorage, 2),
 
+  copyTo: makeFactoryCached(copyTo, cacheStorage, 2),
+  moveTo: makeFactoryCached(moveTo, cacheStorage, 2),
+  renameTo: makeFactoryCached(renameTo, cacheStorage, 2),
+
   deleteFile: makeFactoryCached(deleteFile, cacheStorage, 1),
   deleteFileByName: makeFactoryCached(deleteFileByName, cacheStorage, 3),
   deleteDirectory: makeFactoryCached(deleteDirectory, cacheStorage, 1),
@@ -74,6 +87,10 @@ export const getCachedFactories = (cacheStorage = createCacheStorage()) => ({
   deleteProject: makeFactoryCached(deleteProject, cacheStorage, 1),
   deleteProjectByName: makeFactoryCached(deleteProjectByName, cacheStorage, 3),
 
+  getFromPath: makeFactoryCached(getFromPath, cacheStorage, 2),
+  getParent: makeFactoryCached(getParent, cacheStorage, 1),
+
+  getRoot: makeFactoryCached(getRoot, cacheStorage, 0),
   getProjectsRoot: makeFactoryCached(getProjectsRoot, cacheStorage, 0),
   getContainersRoot: makeFactoryCached(getContainersRoot, cacheStorage, 0),
   getTemplatesRoot: makeFactoryCached(getTemplatesRoot, cacheStorage, 0),

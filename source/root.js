@@ -1,8 +1,19 @@
 import RNFS from 'react-native-fs';
 import { Directory } from '@actualwave/react-native-files';
 
-import { DIRECTORY_TYPE } from './constants';
 import {
+  DIRECTORY_TYPE,
+  FILE_TYPE,
+  PROJECT_ASSETS_FOLDER,
+  CONTAINER_ASSETS_FOLDER,
+  TEMPLATES_ASSETS_FOLDER,
+  SNIPPETS_ASSETS_FOLDER,
+  MODULES_ASSETS_FOLDER,
+  TOOLS_ASSETS_FOLDER,
+} from './constants';
+
+import {
+  getRootPath,
   getProjectsPath,
   getContainersPath,
   getTemplatesPath,
@@ -10,35 +21,12 @@ import {
   getModulesPath,
   getToolsPath,
 } from './path';
+
 import { allowNewDirectories, allowNewProjects, allowNewFiles, system } from './settings';
 
 import { createInfoItem } from './info';
 
-const PROJECT_ASSETS_FOLDER = 'projects';
-const CONTAINER_ASSETS_FOLDER = 'containers';
-const TEMPLATES_ASSETS_FOLDER = 'templates';
-const SNIPPETS_ASSETS_FOLDER = 'snippets';
-const MODULES_ASSETS_FOLDER = 'modules';
-const TOOLS_ASSETS_FOLDER = 'tools';
-
-const copyAssets = async (sourceDirName, target) => {
-  try {
-    const files = await RNFS.readDirAssets(sourceDirName);
-    const { length } = files;
-
-    for (let index = 0; index < length; index++) {
-      const file = files[index];
-      const { name } = file;
-      if (file.isFile()) {
-        await RNFS.copyFileAssets(`${sourceDirName}/${name}`, target.getChildPath(name));
-      } else {
-        console.warn(`Asset ${name} is not a file and cannot be copied.`);
-      }
-    }
-  } catch (error) {
-    console.log('Asset copying error:', error);
-  }
-};
+import { copyAssets, lockFileByName } from './assets';
 
 const createIfNotExists = async (getPath, init, setup, cacheStorage = null) => {
   const path = await getPath();
@@ -62,17 +50,25 @@ const createIfNotExists = async (getPath, init, setup, cacheStorage = null) => {
   return info;
 };
 
-const initProjectsContent = (target) => copyAssets(PROJECT_ASSETS_FOLDER, target);
+const initProjectsContent = (target) => copyAssets(PROJECT_ASSETS_FOLDER, target, true);
 
-const initContainersContent = (target) => copyAssets(CONTAINER_ASSETS_FOLDER, target);
+const initContainersContent = (target) => copyAssets(CONTAINER_ASSETS_FOLDER, target, true);
 
-const initTemplatesContent = (target) => copyAssets(TEMPLATES_ASSETS_FOLDER, target);
+const initTemplatesContent = (target) => copyAssets(TEMPLATES_ASSETS_FOLDER, target, true);
 
-const initSnippetsContent = (target) => copyAssets(SNIPPETS_ASSETS_FOLDER, target);
+const initSnippetsContent = (target) => copyAssets(SNIPPETS_ASSETS_FOLDER, target, true);
 
-const initModulesContent = (target) => copyAssets(MODULES_ASSETS_FOLDER, target);
+const initModulesContent = (target) =>
+  copyAssets(MODULES_ASSETS_FOLDER, target, true, lockFileByName);
 
-const initToolsContent = (target) => copyAssets(TOOLS_ASSETS_FOLDER, target);
+const initToolsContent = (target) => copyAssets(TOOLS_ASSETS_FOLDER, target, true);
+
+const initRootSettings = (info) => {
+  allowNewFiles.setValue(info.settings, true);
+  allowNewDirectories.setValue(info.settings, true);
+  allowNewProjects.setValue(info.settings, false);
+  system.setValue(info.settings, true);
+};
 
 const initProjectsSettings = (info) => {
   allowNewFiles.setValue(info.settings, true);
@@ -100,6 +96,10 @@ const initModulesSettings = (info) => {
 const initToolsSettings = (info) => {
   system.setValue(info.settings, true);
 };
+
+/* The Root, the root of roots */
+export const getRoot = (cacheStorage = null) =>
+  createIfNotExists(getRootPath, () => null, initRootSettings, cacheStorage);
 
 export const getProjectsRoot = (cacheStorage = null) =>
   createIfNotExists(getProjectsPath, initProjectsContent, initProjectsSettings, cacheStorage);

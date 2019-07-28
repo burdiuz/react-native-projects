@@ -1,71 +1,48 @@
-import { PermissionsAndroid } from 'react-native';
+import { EXTERNAL_DIRECTORY_PATH } from '@actualwave/react-native-files';
+
 import {
-  Directory,
-  DOCUMENT_DIRECTORY_PATH,
-  EXTERNAL_DIRECTORY_PATH,
-} from '@actualwave/react-native-files';
+  PROJECTS_DIR_NAME,
+  TEMPLATES_DIR_NAME,
+  CONTAINERS_DIR_NAME,
+  SNIPPETS_DIR_NAME,
+  MODULES_DIR_NAME,
+  TOOLS_DIR_NAME,
+} from './constants';
 
-export const PROJECTS_DIR_NAME = 'Projects';
-export const TEMPLATES_DIR_NAME = 'File Templates';
-export const CONTAINERS_DIR_NAME = 'Run Containers';
-export const SNIPPETS_DIR_NAME = 'Code Snippets';
-export const MODULES_DIR_NAME = 'Modules';
-export const TOOLS_DIR_NAME = 'Tools';
+export const getRootPath = () => EXTERNAL_DIRECTORY_PATH;
 
-const requestExternalStoragePermission = async () => {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-    );
-
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (err) {
-    return false;
-  }
-};
-
-const getRootFilesPath = async () => {
-  const allowedES = await requestExternalStoragePermission();
-
-  return allowedES ? EXTERNAL_DIRECTORY_PATH : DOCUMENT_DIRECTORY_PATH;
-};
-
-export const getProjectsPath = async () => {
-  const root = await getRootFilesPath();
+export const getProjectsPath = () => {
+  const root = getRootPath();
 
   return `${root}/${PROJECTS_DIR_NAME}`;
 };
 
-export const getContainersPath = async () => {
-  const root = await getRootFilesPath();
+export const getContainersPath = () => {
+  const root = getRootPath();
 
   return `${root}/${CONTAINERS_DIR_NAME}`;
 };
 
-export const getTemplatesPath = async () => {
-  const root = await getRootFilesPath();
+export const getTemplatesPath = () => {
+  const root = getRootPath();
 
   return `${root}/${TEMPLATES_DIR_NAME}`;
 };
 
-export const getSnippetsPath = async () => {
-  const root = await getRootFilesPath();
+export const getSnippetsPath = () => {
+  const root = getRootPath();
 
   return `${root}/${SNIPPETS_DIR_NAME}`;
 };
 
-export const getModulesPath = async () => {
-  const root = await getRootFilesPath();
+export const getModulesPath = () => {
+  const root = getRootPath();
 
   return `${root}/${MODULES_DIR_NAME}`;
 };
 
-export const getToolsPath = async () => {
-  const root = await getRootFilesPath();
+export const getToolsPath = () => {
+  const root = getRootPath();
 
   return `${root}/${TOOLS_DIR_NAME}`;
 };

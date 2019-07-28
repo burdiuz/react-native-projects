@@ -1,5 +1,5 @@
-import { Directory, File, Path, splitPath } from '@actualwave/react-native-files';
-import { settingsStorage, parseSettings, convertSettingsToRaw } from '@actualwave/rn-playground-settings';
+import { File } from '@actualwave/react-native-files';
+import { parseSettings, convertSettingsToRaw } from '@actualwave/rn-playground-settings';
 import { getInfoSettingsPath } from '../utils';
 import { createJSONFile, readJSONFile, writeJSONFile } from './file';
 

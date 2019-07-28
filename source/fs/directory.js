@@ -22,10 +22,28 @@ export const deleteDirectoryRaw = async (directory) => {
   return directory.unlink();
 };
 
-export const readDirectoryRaw = async (directory) => {
+export const readDirectoryRaw = async (directory, caseSensitive = false) => {
   const contents = await directory.read();
 
-  return contents.filter((item) => !isSettingsFileName(item.name()));
+  return contents
+    .filter((item) => !isSettingsFileName(item.name()))
+    .sort((a, b) => {
+      const aDir = a.isDirectory();
+      const bDir = b.isDirectory();
+
+      if (aDir !== bDir) {
+        return aDir < bDir ? -1 : 1;
+      }
+
+      const aName = a.name();
+      const bName = b.name();
+
+      if (caseSensitive) {
+        return aName < bName ? -1 : 1;
+      }
+
+      return aName.toLowerCase() < bName.toLowerCase() ? -1 : 1;
+    });
 };
 
 export const splitByTypeDirectoryContents = async (directory) => {

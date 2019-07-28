@@ -1,4 +1,4 @@
-import { File, Directory } from '@actualwave/react-native-files';
+import { Directory } from '@actualwave/react-native-files';
 import { parseJSON, convertToJSON } from '../utils';
 
 export const createFileRaw = async (directory, fileName, data) => {
