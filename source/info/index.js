@@ -1,9 +1,9 @@
 import FileInfo from './file';
 import DirectoryInfo from './directory';
 import ProjectInfo from './project';
-import { FILE_TYPE, DIRECTORY_TYPE, PROJECT_TYPE } from '../constants';
-import { readSettingsFor } from '../fs/settings';
-import { getItemType } from '../utils';
+import {FILE_TYPE, DIRECTORY_TYPE, PROJECT_TYPE} from '../constants';
+import {readSettingsFor} from '../fs/settings';
+import {getItemType} from '../utils';
 
 /*
     Actually, its a good idea of having projectInfos inside of projectInfos, this gives advantages:
@@ -20,7 +20,8 @@ const projectInfoInfoFactory = async (directory, parentProjectInfo = null) =>
 const directoryInfoFactory = async (directory, projectInfo = null) =>
   new DirectoryInfo(directory, projectInfo);
 
-const fileInfoFactory = async (file, projectInfo = null) => new FileInfo(file, projectInfo);
+const fileInfoFactory = async (file, projectInfo = null) =>
+  new FileInfo(file, projectInfo);
 
 export const createInfoItem = async (
   file,
@@ -77,6 +78,16 @@ export const createInfoItem = async (
   return item;
 };
 
+export const createInfoItems = async (
+  list,
+  projectInfo = null,
+  cacheStorage = null,
+) =>
+  Promise.all(
+    list.map(item => createInfoItem(item, projectInfo, null, cacheStorage)),
+  );
+
+/*
 export const createInfoItems = async (list, projectInfo = null, cacheStorage = null) => {
   const result = [];
   const total = list.length;
@@ -87,5 +98,6 @@ export const createInfoItems = async (list, projectInfo = null, cacheStorage = n
 
   return result;
 };
+*/
 
-export { FileInfo, DirectoryInfo, ProjectInfo };
+export {FileInfo, DirectoryInfo, ProjectInfo};
