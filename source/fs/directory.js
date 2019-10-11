@@ -4,7 +4,8 @@ import { FILE_TYPE, DIRECTORY_TYPE, PROJECT_TYPE } from '../constants';
 import { getItemType, isSettingsFileName } from '../utils';
 
 export const createDirectoryRaw = async (directory, dirName) => {
-  const parent = typeof directory === 'string' ? await Directory.get(directory) : directory;
+  const parent =
+    typeof directory === 'string' ? await Directory.get(directory) : directory;
   const exists = await parent.has(dirName);
 
   if (exists) {
@@ -16,17 +17,33 @@ export const createDirectoryRaw = async (directory, dirName) => {
 
 export const deleteDirectoryRaw = async (directory) => {
   if (!directory.exists()) {
-    return Promise.reject(new Error(`Directory "${directory.name()}" does not exist.`));
+    return Promise.reject(
+      new Error(`Directory "${directory.name()}" does not exist.`),
+    );
   }
 
   return directory.unlink();
 };
 
-export const readDirectoryRaw = async (directory, caseSensitive = false) => {
+export const readDirectoryRaw = async (
+  directory,
+  filterFn = null,
+  caseSensitive = false,
+) => {
   const contents = await directory.read();
 
   return contents
-    .filter((item) => !isSettingsFileName(item.name()))
+    .filter((item) => {
+      if (isSettingsFileName(item.name())) {
+        return false;
+      }
+
+      if (filterFn) {
+        return filterFn(item);
+      }
+
+      return true;
+    })
     .sort((a, b) => {
       const aDir = a.isDirectory();
       const bDir = b.isDirectory();
@@ -70,7 +87,11 @@ export const splitByTypeDirectoryContents = async (directory) => {
     }
   }
 
-  return { [PROJECT_TYPE]: projects, [DIRECTORY_TYPE]: directories, [FILE_TYPE]: files };
+  return {
+    [PROJECT_TYPE]: projects,
+    [DIRECTORY_TYPE]: directories,
+    [FILE_TYPE]: files,
+  };
 };
 
 export const countDirectoryChildren = async (directory) => {

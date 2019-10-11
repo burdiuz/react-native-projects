@@ -7,6 +7,6 @@ const {
   initializer,
   parser,
   toRawConverter,
-} = makeBoolSettingApi('directory.allowNewDirectories');
+} = makeBoolSettingApi('directory.allowNewDirectories', true);
 
 export { SETTING_NAME, getValue, setValue, initializer, parser, toRawConverter };
