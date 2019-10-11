@@ -80,6 +80,10 @@ export const getCachedFactories = (cacheStorage = createCacheStorage()) => ({
   moveTo: makeFactoryCached(moveTo, cacheStorage, 2),
   renameTo: makeFactoryCached(renameTo, cacheStorage, 2),
 
+  copyTo: makeFactoryCached(copyTo, cacheStorage, 2),
+  moveTo: makeFactoryCached(moveTo, cacheStorage, 2),
+  renameTo: makeFactoryCached(renameTo, cacheStorage, 2),
+
   deleteFile: makeFactoryCached(deleteFile, cacheStorage, 1),
   deleteFileByName: makeFactoryCached(deleteFileByName, cacheStorage, 3),
   deleteDirectory: makeFactoryCached(deleteDirectory, cacheStorage, 1),
