@@ -1,7 +1,7 @@
 import RNFS from 'react-native-fs';
-import {Directory} from '@actualwave/react-native-files';
+import { Directory } from '@actualwave/react-native-files';
 
-import {createInfoItem} from './info';
+import { createInfoItem } from './info';
 
 import {
   FILE_TYPE,
@@ -23,12 +23,7 @@ import {
   getToolsPath,
 } from './path';
 
-export const copyAssets = async (
-  sourceDirName,
-  target,
-  overwrite = false,
-  assetHandler = null,
-) => {
+export const copyAssets = async (sourceDirName, target, overwrite = false, assetHandler = null) => {
   try {
     if (!target.exists()) {
       await target.create();
