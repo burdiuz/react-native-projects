@@ -72,9 +72,9 @@ export const getCachedFactories = (cacheStorage = createCacheStorage()) => ({
   createDirectory: makeFactoryCached(createDirectory, cacheStorage, 3),
   createProject: makeFactoryCached(createProject, cacheStorage, 4),
 
-  readDirectory: makeFactoryCached(readDirectory, cacheStorage, 2),
-  readProjectContents: makeFactoryCached(readProjectContents, cacheStorage, 1),
-  readDirectoryByPath: makeFactoryCached(readDirectoryByPath, cacheStorage, 2),
+  readDirectory: makeFactoryCached(readDirectory, cacheStorage, 3),
+  readProjectContents: makeFactoryCached(readProjectContents, cacheStorage, 2),
+  readDirectoryByPath: makeFactoryCached(readDirectoryByPath, cacheStorage, 3),
 
   copyTo: makeFactoryCached(copyTo, cacheStorage, 2),
   moveTo: makeFactoryCached(moveTo, cacheStorage, 2),

@@ -78,22 +78,32 @@ const initProjectsSettings = (info) => {
 };
 
 const initContainersSettings = (info) => {
+  allowNewFiles.setValue(info.settings, true);
+  allowNewDirectories.setValue(info.settings, true);
   system.setValue(info.settings, true);
 };
 
 const initTemplatesSettings = (info) => {
+  allowNewFiles.setValue(info.settings, true);
+  allowNewDirectories.setValue(info.settings, true);
   system.setValue(info.settings, true);
 };
 
 const initSnippetsSettings = (info) => {
+  allowNewFiles.setValue(info.settings, true);
+  allowNewDirectories.setValue(info.settings, true);
   system.setValue(info.settings, true);
 };
 
 const initModulesSettings = (info) => {
+  allowNewFiles.setValue(info.settings, true);
+  allowNewDirectories.setValue(info.settings, true);
   system.setValue(info.settings, true);
 };
 
 const initToolsSettings = (info) => {
+  allowNewFiles.setValue(info.settings, true);
+  allowNewDirectories.setValue(info.settings, true);
   system.setValue(info.settings, true);
 };
 
