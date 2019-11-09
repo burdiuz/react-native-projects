@@ -9,22 +9,17 @@ import {
   deleteProjectByName,
 } from './delete';
 
-import { readDirectory, readProjectContents, readDirectoryByPath } from './read';
+import {
+  readDirectory,
+  readProjectContents,
+  readDirectoryByPath,
+} from './read';
 
 import { copyTo, moveTo, renameTo } from './copy';
 
 import { getFromPath, getParent } from './get';
 
-import {
-  getRoot,
-  getProjectsRoot,
-  getContainersRoot,
-  getTemplatesRoot,
-  getSnippetsRoot,
-  getToolsRoot,
-  getModulesRoot,
-  getRootDirectories,
-} from './root';
+import { getWorkingDir, initializeRoot } from './root';
 
 // don't think its necessary to cache roots since they are intended to be read-only
 // import {} from './root';
@@ -87,19 +82,17 @@ export const getCachedFactories = (cacheStorage = createCacheStorage()) => ({
   deleteFile: makeFactoryCached(deleteFile, cacheStorage, 1),
   deleteFileByName: makeFactoryCached(deleteFileByName, cacheStorage, 3),
   deleteDirectory: makeFactoryCached(deleteDirectory, cacheStorage, 1),
-  deleteDirectoryByName: makeFactoryCached(deleteDirectoryByName, cacheStorage, 3),
+  deleteDirectoryByName: makeFactoryCached(
+    deleteDirectoryByName,
+    cacheStorage,
+    3,
+  ),
   deleteProject: makeFactoryCached(deleteProject, cacheStorage, 1),
   deleteProjectByName: makeFactoryCached(deleteProjectByName, cacheStorage, 3),
 
   getFromPath: makeFactoryCached(getFromPath, cacheStorage, 2),
   getParent: makeFactoryCached(getParent, cacheStorage, 1),
 
-  getRoot: makeFactoryCached(getRoot, cacheStorage, 0),
-  getProjectsRoot: makeFactoryCached(getProjectsRoot, cacheStorage, 0),
-  getContainersRoot: makeFactoryCached(getContainersRoot, cacheStorage, 0),
-  getTemplatesRoot: makeFactoryCached(getTemplatesRoot, cacheStorage, 0),
-  getSnippetsRoot: makeFactoryCached(getSnippetsRoot, cacheStorage, 0),
-  getModulesRoot: makeFactoryCached(getModulesRoot, cacheStorage, 0),
-  getToolsRoot: makeFactoryCached(getToolsRoot, cacheStorage, 0),
-  getRootDirectories: makeFactoryCached(getRootDirectories, cacheStorage, 0),
+  getWorkingDir: makeFactoryCached(getWorkingDir, cacheStorage, 0),
+  initializeRoot: makeFactoryCached(initializeRoot, cacheStorage, 5),
 });

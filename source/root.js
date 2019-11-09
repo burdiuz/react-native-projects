@@ -1,47 +1,53 @@
 import RNFS from 'react-native-fs';
 import { Directory } from '@actualwave/react-native-files';
+import { valuesMapFactory } from '@actualwave/closure-value';
 
 import {
-  DIRECTORY_TYPE,
-  FILE_TYPE,
-  PROJECT_ASSETS_FOLDER,
-  CONTAINER_ASSETS_FOLDER,
-  TEMPLATES_ASSETS_FOLDER,
-  SNIPPETS_ASSETS_FOLDER,
-  MODULES_ASSETS_FOLDER,
-  TOOLS_ASSETS_FOLDER,
-} from './constants';
-
-import {
-  getRootPath,
-  getProjectsPath,
-  getContainersPath,
-  getTemplatesPath,
-  getSnippetsPath,
-  getModulesPath,
-  getToolsPath,
-} from './path';
-
-import { allowNewDirectories, allowNewProjects, allowNewFiles, system } from './settings';
+  allowNewDirectories,
+  allowNewProjects,
+  allowNewFiles,
+  system,
+} from './settings';
 
 import { createInfoItem } from './info';
 
-import { copyAssets, lockFileByName } from './assets';
+import { copyAssets as copyAssetsFn, lockFileByName } from './assets';
 
-const createIfNotExists = async (getPath, init, setup, cacheStorage = null) => {
-  const path = await getPath();
+import { DIRECTORY_TYPE, FILE_TYPE } from './constants';
+
+import { getWorkingDirPath, getRootPath } from './path';
+
+const {
+  values: roots,
+  get: getRoot,
+  set: addRoot,
+  has: isPathRoot,
+  delete: removeRoot,
+} = valuesMapFactory();
+
+export { isPathRoot };
+
+const createIfNotExists = async (path, init, setup, cacheStorage = null) => {
   const directory = await Directory.get(path);
   let runSetup = false;
 
   if (!directory.exists()) {
     runSetup = true;
     await directory.create();
+
+    console.log(' -- initialize');
     await init(directory);
   }
 
-  const info = await createInfoItem(directory, null, DIRECTORY_TYPE, cacheStorage);
+  const info = await createInfoItem(
+    directory,
+    null,
+    DIRECTORY_TYPE,
+    cacheStorage,
+  );
 
   if (runSetup && setup) {
+    console.log(' -- setup');
     await setup(info);
 
     info.flushSettings();
@@ -50,99 +56,115 @@ const createIfNotExists = async (getPath, init, setup, cacheStorage = null) => {
   return info;
 };
 
-const initProjectsContent = (target) => copyAssets(PROJECT_ASSETS_FOLDER, target, true);
+const validateRootPath = (path) => {
+  for (const [key] in roots) {
+    if (key === path || key === `${path}/` || key === `${path}\\`) {
+      throw new Error(`Root path "${path}" is already registered.`);
+    }
 
-const initContainersContent = (target) => copyAssets(CONTAINER_ASSETS_FOLDER, target, true);
+    if (path.indexOf(key) === 0 || key.indexOf(path) === 0) {
+      throw new Error(
+        `Path "${path}" and registered root "${key}" are conflicting. Root folders cannot be direct relatives.`,
+      );
+    }
+  }
+};
 
-const initTemplatesContent = (target) => copyAssets(TEMPLATES_ASSETS_FOLDER, target, true);
-
-const initSnippetsContent = (target) => copyAssets(SNIPPETS_ASSETS_FOLDER, target, true);
-
-const initModulesContent = (target) =>
-  copyAssets(MODULES_ASSETS_FOLDER, target, true, lockFileByName);
-
-const initToolsContent = (target) => copyAssets(TOOLS_ASSETS_FOLDER, target, true);
-
-const initRootSettings = (info) => {
+const defaultInitializerFn = (info) => {
   allowNewFiles.setValue(info.settings, true);
   allowNewDirectories.setValue(info.settings, true);
   allowNewProjects.setValue(info.settings, false);
   system.setValue(info.settings, true);
 };
 
-const initProjectsSettings = (info) => {
-  allowNewFiles.setValue(info.settings, true);
-  allowNewDirectories.setValue(info.settings, true);
-  allowNewProjects.setValue(info.settings, true);
-  system.setValue(info.settings, true);
+export const initializeRoot = async (
+  rootDirName,
+  assetsDirName,
+  overwrite,
+  initializerFn = defaultInitializerFn,
+  assetHandlerFn = null,
+  cacheStorage = null,
+) => {
+  let info;
+  const path = getRootPath(rootDirName);
+
+  const time = Date.now();
+  console.log(' ---- init', rootDirName);
+
+  // throws error if invalid, which will reject the promise from this function.
+  validateRootPath(path);
+
+  const copyAssets = (
+    overwriteArg = overwrite,
+    assetHandlerArg = assetHandlerFn,
+    targetArg = info.fs,
+  ) =>
+    copyAssetsFn(
+      assetsDirName,
+      targetArg,
+      overwriteArg,
+      assetHandlerArg &&
+        ((target, name) => assetHandlerArg(target, name, cacheStorage)),
+    );
+
+  info = await createIfNotExists(
+    path,
+    (target) => copyAssets(overwrite, assetHandlerFn, target),
+    initializerFn,
+    cacheStorage,
+  );
+
+  console.log(' ---- completed', rootDirName, Date.now() - time);
+
+  addRoot(path, {
+    info,
+    rootDirName,
+    assetsDirName,
+    copyAssets,
+  });
+
+  return info;
 };
 
-const initContainersSettings = (info) => {
-  allowNewFiles.setValue(info.settings, true);
-  allowNewDirectories.setValue(info.settings, true);
-  system.setValue(info.settings, true);
+/**
+ * Should be used only if unique names are guaranteed
+ */
+export const getRootByDirectoryName = (name) => {
+  for ([, { info }] in roots) {
+    if (name === info.name) {
+      return info;
+    }
+  }
+
+  return null;
 };
 
-const initTemplatesSettings = (info) => {
-  allowNewFiles.setValue(info.settings, true);
-  allowNewDirectories.setValue(info.settings, true);
-  system.setValue(info.settings, true);
+export const getRootList = () => {
+  const list = [];
+
+  for ([, { info }] in roots) {
+    list.push(info);
+  }
+
+  return list;
 };
 
-const initSnippetsSettings = (info) => {
-  allowNewFiles.setValue(info.settings, true);
-  allowNewDirectories.setValue(info.settings, true);
-  system.setValue(info.settings, true);
+export const getRootCopyAssetsFn = (path) => {
+  const { copyAssets = null } = getRoot(path) || {};
+
+  return copyAssets;
 };
 
-const initModulesSettings = (info) => {
-  allowNewFiles.setValue(info.settings, true);
-  allowNewDirectories.setValue(info.settings, true);
-  system.setValue(info.settings, true);
-};
-
-const initToolsSettings = (info) => {
-  allowNewFiles.setValue(info.settings, true);
-  allowNewDirectories.setValue(info.settings, true);
-  system.setValue(info.settings, true);
-};
-
-/* The Root, the root of roots */
-export const getRoot = (cacheStorage = null) =>
-  createIfNotExists(getRootPath, () => null, initRootSettings, cacheStorage);
-
-export const getProjectsRoot = (cacheStorage = null) =>
-  createIfNotExists(getProjectsPath, initProjectsContent, initProjectsSettings, cacheStorage);
-
-export const getContainersRoot = (cacheStorage = null) =>
-  createIfNotExists(getContainersPath, initContainersContent, initContainersSettings, cacheStorage);
-
-export const getTemplatesRoot = (cacheStorage = null) =>
-  createIfNotExists(getTemplatesPath, initTemplatesContent, initTemplatesSettings, cacheStorage);
-
-export const getSnippetsRoot = (cacheStorage = null) =>
-  createIfNotExists(getSnippetsPath, initSnippetsContent, initSnippetsSettings, cacheStorage);
-
-export const getModulesRoot = (cacheStorage = null) =>
-  createIfNotExists(getModulesPath, initModulesContent, initModulesSettings, cacheStorage);
-
-export const getToolsRoot = (cacheStorage = null) =>
-  createIfNotExists(getToolsPath, initToolsContent, initToolsSettings, cacheStorage);
-
-export const getRootDirectories = async (cacheStorage = null) => {
-  const projects = await getProjectsRoot(cacheStorage);
-  const containers = await getContainersRoot(cacheStorage);
-  const templates = await getTemplatesRoot(cacheStorage);
-  const snippets = await getSnippetsRoot(cacheStorage);
-  const modules = await getModulesRoot(cacheStorage);
-  const tools = await getToolsRoot(cacheStorage);
-
-  return {
-    projects,
-    containers,
-    templates,
-    snippets,
-    modules,
-    tools,
-  };
-};
+/* The Working Directory, the root of roots */
+export const getWorkingDir = (cacheStorage = null) =>
+  createIfNotExists(
+    getWorkingDirPath(),
+    () => null,
+    (info) => {
+      allowNewFiles.setValue(info.settings, true);
+      allowNewDirectories.setValue(info.settings, true);
+      allowNewProjects.setValue(info.settings, false);
+      system.setValue(info.settings, true);
+    },
+    cacheStorage,
+  );

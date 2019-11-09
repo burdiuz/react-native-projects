@@ -1,5 +1,5 @@
 import { FILE_TYPE } from '../constants';
-import { fileHistory, gistFileTarget, fileLock } from '../settings';
+import { gistFileTarget, fileLock, fileHistory } from '../settings';
 import Info from './info';
 
 class FileInfo extends Info {
@@ -11,6 +11,18 @@ class FileInfo extends Info {
 
   get history() {
     return fileHistory.getValue(this.settings);
+  }
+
+  async createHistory() {
+    let history = this.history;
+
+    if(!history){
+      history = await fileHistory.createHistoryFor(this.fs);
+
+      fileHistory.setValue(this.settings, history);
+    }
+
+    return history;
   }
 
   async getContent() {

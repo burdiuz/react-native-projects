@@ -13,7 +13,6 @@ import * as projectName from './projectname';
 import * as fileLock from './filelock';
 import * as fileRequiresBuild from './filerequiresbuild';
 import * as fileRunContainer from './fileruncontainer';
-import * as fsTarget from './fstarget';
 import * as gistFileTarget from './gistfiletarget';
 import * as gistProjectTarget from './gistprojecttarget';
 import * as allowNewDirectories from './allownewdirectories';
@@ -37,7 +36,7 @@ registerSettingsEntityType(FILE_TYPE);
 registerSettingsEntityType(DIRECTORY_TYPE);
 registerSettingsEntityType(PROJECT_TYPE);
 
-applySettingHandlers({ fsTarget, pinned, system }, PROJECT_TYPE, DIRECTORY_TYPE, FILE_TYPE);
+applySettingHandlers({ pinned, system }, PROJECT_TYPE, DIRECTORY_TYPE, FILE_TYPE);
 applySettingHandlers(
   { fileHistory, fileLock, gistFileTarget, fileRequiresBuild, fileRunContainer },
   FILE_TYPE,
@@ -57,7 +56,6 @@ export {
   fileLock,
   fileRequiresBuild,
   fileRunContainer,
-  fsTarget,
   gistFileTarget,
   gistProjectTarget,
   projectName,

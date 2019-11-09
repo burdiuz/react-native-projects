@@ -11,14 +11,18 @@ export class History {
     return this.slices.length < 1;
   }
 
+  get currentSlice() {
+    const { slices } = this;
+
+    return slices[slices.length - 1];
+  }
+
   get currentVersion() {
-    const latestIndex = this.slices.length - 1;
-    return latestIndex >= 0 ? this.slices[latestIndex].version : createVersion();
+    return this.isEmpty() ? createVersion() : this.currentSlice.version;
   }
 
   get currentContent() {
-    const latestIndex = this.slices.length - 1;
-    return latestIndex >= 0 ? this.slices[latestIndex].content : undefined;
+    return this.isEmpty() ? undefined : this.currentSlice.content;
   }
 
   bumpVersion() {
@@ -26,11 +30,21 @@ export class History {
   }
 
   addContent(content, locked = false, version = null) {
-    this.slices.push(HistorySlice.create(content, version || this.bumpVersion(), locked));
+    this.slices.push(
+      HistorySlice.create(content, version || this.bumpVersion(), locked),
+    );
   }
 
   addSlice(slice) {
     this.slices.push(slice);
+  }
+
+  shiftSlice() {
+    return this.slices.shift();
+  }
+
+  popSlice() {
+    return this.slices.pop();
   }
 }
 

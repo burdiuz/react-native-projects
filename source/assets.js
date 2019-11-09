@@ -3,38 +3,27 @@ import { Directory } from '@actualwave/react-native-files';
 
 import { createInfoItem } from './info';
 
-import {
-  FILE_TYPE,
-  PROJECT_ASSETS_FOLDER,
-  CONTAINER_ASSETS_FOLDER,
-  TEMPLATES_ASSETS_FOLDER,
-  SNIPPETS_ASSETS_FOLDER,
-  MODULES_ASSETS_FOLDER,
-  TOOLS_ASSETS_FOLDER,
-} from './constants';
+import { FILE_TYPE } from './constants';
 
-import {
-  getRootPath,
-  getProjectsPath,
-  getContainersPath,
-  getTemplatesPath,
-  getSnippetsPath,
-  getModulesPath,
-  getToolsPath,
-} from './path';
-
-export const copyAssets = async (sourceDirName, target, overwrite = false, assetHandler = null) => {
+export const copyAssets = async (
+  sourceDirName,
+  target,
+  overwrite = false,
+  assetHandler = null,
+) => {
   try {
     if (!target.exists()) {
       await target.create();
     }
 
     const files = await RNFS.readDirAssets(sourceDirName);
-    const {length} = files;
+    const { length } = files;
 
     for (let index = 0; index < length; index++) {
       const file = files[index];
-      const {name} = file;
+      const { name } = file;
+
+      const time = Date.now();
       const proceed =
         (file.isFile() && (overwrite || !(await target.has(name)))) ||
         (file.isDirectory() && !(await target.has(name)));
@@ -49,6 +38,8 @@ export const copyAssets = async (sourceDirName, target, overwrite = false, asset
           if (assetHandler) {
             await assetHandler(target, name);
           }
+
+          console.log(' - asset ', name, Date.now() - time);
         } else {
           const childTarget = await target.createDirectory(name);
 
@@ -73,11 +64,11 @@ export const copyAssets = async (sourceDirName, target, overwrite = false, asset
   }
 };
 
-export const lockFileByName = async (parent, name) => {
+export const lockFileByName = async (parent, name, cacheStorage = null) => {
   const file = await parent.getChildIfExist(name);
 
   if (file.isFile()) {
-    const info = await createInfoItem(file, null, FILE_TYPE);
+    const info = await createInfoItem(file, null, FILE_TYPE, cacheStorage);
 
     info.locked = true;
 
@@ -92,13 +83,13 @@ const makeCopyAssetsFn = (
 ) => async (
   overwrite = false,
   assetHandler = defaultHandler,
-  targetDirectoryCached = null,
+  cacheStorage = null,
 ) => {
-  let directory = targetDirectoryCached;
+  const path = await getPath();
+  const directoryInfo = cacheStorage.get(path);
+  let directory = directoryInfo ? directoryInfo.fs : null;
 
   if (!directory) {
-    const path = await getPath();
-
     directory = await Directory.get(path);
   }
 
@@ -106,34 +97,3 @@ const makeCopyAssetsFn = (
 
   return directory;
 };
-
-export const copyProjectsAssets = makeCopyAssetsFn(
-  PROJECT_ASSETS_FOLDER,
-  getProjectsPath,
-);
-
-export const copyContainersAssets = makeCopyAssetsFn(
-  CONTAINER_ASSETS_FOLDER,
-  getContainersPath,
-);
-
-export const copyTemplatesAssets = makeCopyAssetsFn(
-  TEMPLATES_ASSETS_FOLDER,
-  getTemplatesPath,
-);
-
-export const copySnippetsAssets = makeCopyAssetsFn(
-  SNIPPETS_ASSETS_FOLDER,
-  getSnippetsPath,
-);
-
-export const copyModulesAssets = makeCopyAssetsFn(
-  MODULES_ASSETS_FOLDER,
-  getModulesPath,
-  lockFileByName,
-);
-
-export const copyToolsAssets = makeCopyAssetsFn(
-  TOOLS_ASSETS_FOLDER,
-  getToolsPath,
-);

@@ -5,8 +5,14 @@ import Version, {
 } from './version';
 
 export class HistorySlice {
-  constructor(content = '', version = createVersion(), locked = false) {
+  constructor(
+    content = '',
+    version = createVersion(),
+    locked = false,
+    timestampArg = undefined,
+  ) {
     this.locked = locked;
+    const timestamp = timestampArg || Date.now();
 
     Object.assign(this, {
       get content() {
@@ -14,6 +20,9 @@ export class HistorySlice {
       },
       get version() {
         return version;
+      },
+      get timestamp() {
+        return timestamp;
       },
     });
   }
@@ -32,20 +41,24 @@ export class HistorySlice {
     return JSON.stringify(HistorySlice.toObject(this), null, 2);
   }
 
-  static create(content, version, locked) {
-    return new HistorySlice(content, version, locked);
+  static create(content, version, locked, timestamp = undefined) {
+    return new HistorySlice(content, version, locked, timestamp);
   }
 
-  static toObject({ content, version, locked }) {
-    return { content, version: versionToObject(version), locked };
+  static toObject({ content, version, locked, timestamp = undefined }) {
+    return { content, version: versionToObject(version), locked, timestamp };
   }
 
-  static fromObject({ content, version, locked }) {
+  static fromObject({ content, version, locked, timestamp = undefined }) {
     const versionImpl = versionFromObject(version);
 
-    return new HistorySlice(content, versionImpl, locked);
+    return new HistorySlice(content, versionImpl, locked, timestamp);
   }
 }
 
-export const createHistorySlice = (content, version, locked) =>
-  HistorySlice.create(content, version, locked);
+export const createHistorySlice = (
+  content,
+  version,
+  locked,
+  timestamp = undefined,
+) => HistorySlice.create(content, version, locked, timestamp);
