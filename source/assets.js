@@ -23,7 +23,6 @@ export const copyAssets = async (
       const file = files[index];
       const { name } = file;
 
-      const time = Date.now();
       const proceed =
         (file.isFile() && (overwrite || !(await target.has(name)))) ||
         (file.isDirectory() && !(await target.has(name)));
@@ -38,8 +37,6 @@ export const copyAssets = async (
           if (assetHandler) {
             await assetHandler(target, name);
           }
-
-          console.log(' - asset ', name, Date.now() - time);
         } else {
           const childTarget = await target.createDirectory(name);
 

@@ -35,7 +35,6 @@ const createIfNotExists = async (path, init, setup, cacheStorage = null) => {
     runSetup = true;
     await directory.create();
 
-    console.log(' -- initialize');
     await init(directory);
   }
 
@@ -47,7 +46,6 @@ const createIfNotExists = async (path, init, setup, cacheStorage = null) => {
   );
 
   if (runSetup && setup) {
-    console.log(' -- setup');
     await setup(info);
 
     info.flushSettings();
@@ -88,9 +86,6 @@ export const initializeRoot = async (
   let info;
   const path = getRootPath(rootDirName);
 
-  const time = Date.now();
-  console.log(' ---- init', rootDirName);
-
   // throws error if invalid, which will reject the promise from this function.
   validateRootPath(path);
 
@@ -113,8 +108,6 @@ export const initializeRoot = async (
     initializerFn,
     cacheStorage,
   );
-
-  console.log(' ---- completed', rootDirName, Date.now() - time);
 
   addRoot(path, {
     info,
