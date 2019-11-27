@@ -5,12 +5,7 @@ import { createInfoItem } from './info';
 
 import { FILE_TYPE } from './constants';
 
-export const copyAssets = async (
-  sourceDirName,
-  target,
-  overwrite = false,
-  assetHandler = null,
-) => {
+export const copyAssets = async (sourceDirName, target, overwrite = false, assetHandler = null) => {
   try {
     if (!target.exists()) {
       await target.create();
@@ -23,37 +18,29 @@ export const copyAssets = async (
       const file = files[index];
       const { name } = file;
 
-      const proceed =
-        (file.isFile() && (overwrite || !(await target.has(name)))) ||
-        (file.isDirectory() && !(await target.has(name)));
+      const exists = await target.has(name);
+      const proceed = (file.isFile() && (overwrite || !exists)) || file.isDirectory();
 
       if (proceed) {
         if (file.isFile()) {
-          await RNFS.copyFileAssets(
-            `${sourceDirName}/${name}`,
-            target.getChildPath(name),
-          );
+          await RNFS.copyFileAssets(`${sourceDirName}/${name}`, target.getChildPath(name));
 
           if (assetHandler) {
             await assetHandler(target, name);
           }
         } else {
-          const childTarget = await target.createDirectory(name);
+          let childTarget;
 
-          await copyAssets(
-            `${sourceDirName}/${name}`,
-            childTarget,
-            overwrite,
-            assetHandler,
-          );
+          if (exists) {
+            childTarget = await target.getDirectory(name);
+          } else {
+            childTarget = await target.createDirectory(name);
+          }
+
+          await copyAssets(`${sourceDirName}/${name}`, childTarget, overwrite, assetHandler);
         }
       } else {
-        console.warn(
-          `Asset ${name} cannot be copied.`,
-          file.isFile(),
-          overwrite,
-          !(await target.has(name)),
-        );
+        console.warn(`Asset ${name} cannot be copied.`, file.isFile(), overwrite, !(await target.has(name)));
       }
     }
   } catch (error) {
@@ -73,11 +60,7 @@ export const lockFileByName = async (parent, name, cacheStorage = null) => {
   }
 };
 
-const makeCopyAssetsFn = (
-  sourceAssetsDir,
-  getPath,
-  defaultHandler = null,
-) => async (
+const makeCopyAssetsFn = (sourceAssetsDir, getPath, defaultHandler = null) => async (
   overwrite = false,
   assetHandler = defaultHandler,
   cacheStorage = null,
