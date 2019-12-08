@@ -29,14 +29,35 @@ export class History {
     return this.currentVersion.bump();
   }
 
-  addContent(content, locked = false, version = null) {
-    this.slices.push(
-      HistorySlice.create(content, version || this.bumpVersion(), locked),
-    );
+  pushContent(content, locked = false, version = null, limitTo = 0) {
+    this.slices.push(HistorySlice.create(content, version || this.bumpVersion(), locked));
+
+    if (limitTo > 0) {
+      this.limitSlicesTo(limitTo);
+    }
   }
 
-  addSlice(slice) {
+  pushSlice(slice, limitTo = 0) {
     this.slices.push(slice);
+
+    if (limitTo > 0) {
+      this.limitSlicesTo(limitTo);
+    }
+  }
+
+  limitSlicesTo(limit) {
+    let count = 0;
+
+    this.slices = this.slices.reduceRight((list, slice) => {
+      if (slice.locked) {
+        list.unshift(slice);
+      } else if (count < limit) {
+        count += 1;
+        list.unshift(slice);
+      }
+
+      return list;
+    }, []);
   }
 
   shiftSlice() {
