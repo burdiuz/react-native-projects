@@ -4,8 +4,8 @@
   "private": true,
   "main": "source/index.js",
   "dependencies": {
-    "@actualwave/closure-value": "file:../RNTestApp/node_modules/@actualwave/closure-value",
-    "@actualwave/react-native-files": "file:../react-native-files",
-    "@actualwave/rn-playground-settings": "file:../rn-playground-settings"
+    "@actualwave/closure-value": "^0.0.3",
+    "@actualwave/react-native-files": "github:burdiuz/react-native-files#master",
+    "@actualwave/rn-playground-settings": "github:burdiuz/rn-playground-settings#master"
   }
 }
