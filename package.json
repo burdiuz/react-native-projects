@@ -5,6 +5,7 @@
   "main": "source/index.js",
   "dependencies": {
     "@actualwave/closure-value": "^0.0.3",
+    "@actualwave/event-dispatcher": "^1.2.2",
     "@actualwave/react-native-files": "github:burdiuz/react-native-files#master",
     "@actualwave/rn-playground-settings": "github:burdiuz/rn-playground-settings#master"
   }
